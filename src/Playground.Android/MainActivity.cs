@@ -18,7 +18,7 @@ using System.IO;
 
 namespace Playground.Android
 {
-    [Activity (Label = "Playground.Android", MainLauncher = true)]
+    [Activity(Label = "Playground.Android", MainLauncher = true)]
     public class MainActivity : Activity
     {
         int count = 1;
@@ -31,7 +31,8 @@ namespace Playground.Android
         {
             Console.WriteLine("Downloading {0}/{1}", totalBytes, totalBytesExpected);
 
-            RunOnUiThread(() => {
+            RunOnUiThread(() =>
+            {
                 progress.Max = 10000;
 
                 var progressPercent = (float)totalBytes / (float)totalBytesExpected;
@@ -42,24 +43,26 @@ namespace Playground.Android
             });
         }
 
-        protected override void OnCreate (Bundle bundle)
+        protected override void OnCreate(Bundle bundle)
         {
-            base.OnCreate (bundle);
+            base.OnCreate(bundle);
 
             // Set our view from the "main" layout resource
-            SetContentView (Resource.Layout.Main);
+            SetContentView(Resource.Layout.Main);
 
             //This API is only available in Mono and Xamarin products.
             //You can filter and/or re-order the ciphers suites that the SSL/TLS server will accept from a client.
             //The following example removes weak (export) ciphers from the list that will be offered to the server.
-            ServicePointManager.ClientCipherSuitesCallback += (protocol, allCiphers) =>
-                allCiphers.Where(x => !x.Contains("EXPORT")).ToList();
+           // ServicePointManager.ClientCipherSuitesCallback += (protocol, allCiphers) =>
+            //    allCiphers.Where(x => !x.Contains("EXPORT")).ToList();
 
             //Here we accept any certificate and just print the cert's data.
-            ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => {
+            ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) =>
+            {
                 System.Diagnostics.Debug.WriteLine("Callback Server Certificate: " + sslPolicyErrors);
 
-                foreach(var el in chain.ChainElements) {
+                foreach (var el in chain.ChainElements)
+                {
                     System.Diagnostics.Debug.WriteLine(el.Certificate.GetCertHashString());
                     System.Diagnostics.Debug.WriteLine(el.Information);
                 }
@@ -78,14 +81,16 @@ namespace Playground.Android
 
             var resp = default(HttpResponseMessage);
 
-            cancel.Click += (o, e) => {
+            cancel.Click += (o, e) =>
+            {
                 Console.WriteLine("Canceled token {0:x8}", this.currentToken.Token.GetHashCode());
                 this.currentToken.Cancel();
                 if (resp != null) resp.Content.Dispose();
             };
 
-            button.Click += async (o, e) => {
-                var handler = new NativeMessageHandler();
+            button.Click += async (o, e) =>
+            {
+                var handler = new NativeMessageHandler(false, true);
                 var client = new HttpClient(handler);
 
                 currentToken = new CancellationTokenSource();
@@ -96,7 +101,8 @@ namespace Playground.Android
                 handler.DisableCaching = true;
 
                 st.Start();
-                try {
+                try
+                {
                     //var url = "https://tv.eurosport.com";
                     //var url = "https://github.com/downloads/nadlabak/android/cm-9.1.0a-umts_sholes.zip";
                     var url = "https://github.com/paulcbetts/ModernHttpClient/releases/download/0.9.0/ModernHttpClient-0.9.zip";
@@ -109,7 +115,8 @@ namespace Playground.Android
 
                     status.Text = string.Format("HTTP {0}: {1}", (int)resp.StatusCode, resp.ReasonPhrase);
 
-                    foreach (var v in resp.Headers) {
+                    foreach (var v in resp.Headers)
+                    {
                         Console.WriteLine("{0}: {1}", v.Key, String.Join(",", v.Value));
                     }
 
@@ -124,9 +131,13 @@ namespace Playground.Android
                     var md5 = MD5.Create();
                     var hash = md5.ComputeHash(bytes);
                     hashView.Text = ToHex(hash, false);
-                } catch (Exception ex) {
+                }
+                catch (Exception ex)
+                {
                     result.Text = ex.ToString();
-                } finally {
+                }
+                finally
+                {
                     st.Stop();
                     result.Text = (result.Text ?? "") + String.Format("\n\nTook {0} milliseconds", st.ElapsedMilliseconds);
                 }
@@ -135,7 +146,7 @@ namespace Playground.Android
 
         public static string ToHex(byte[] bytes, bool upperCase)
         {
-            var result = new StringBuilder(bytes.Length*2);
+            var result = new StringBuilder(bytes.Length * 2);
 
             for (int i = 0; i < bytes.Length; i++)
                 result.Append(bytes[i].ToString(upperCase ? "X2" : "x2"));
