@@ -5,6 +5,7 @@ using System.Threading;
 namespace ModernHttpClient
 {
     // Straight-up thieved from http://www.hanselman.com/blog/ComparingTwoTechniquesInNETAsynchronousCoordinationPrimitives.aspx 
+    // Edit no longer a copy, improved by Howard lee contriubter to ModernHttpclient :)
     public sealed class AsyncLock
     {
         readonly SemaphoreSlim m_semaphore;
